@@ -155,6 +155,7 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
 {
   esp_err_t ret = ESP_OK;
   bool light_state = 0;
+  bool switch_state = 0;
 
   if (!message)
   {
@@ -180,11 +181,11 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
         // Here is the code to turn on/off your LED
         if (light_state == 1)
         {
-          digitalWrite(LED_PIN, HIGH);
+          digitalWrite(LED_PIN, LOW);
         }
         else
         {
-          digitalWrite(LED_PIN, LOW);
+          digitalWrite(LED_PIN, HIGH);
         }
       }
     }
@@ -197,7 +198,7 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
     {
       if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL)
       {
-        bool switch_state = message->attribute.data.value ? *(bool *)message->attribute.data.value : switch_state;
+        switch_state = message->attribute.data.value ? *(bool *)message->attribute.data.value : switch_state;
         log_i("Switch sets to %s", switch_state ? "On" : "Off");
         // Handle the switch state here
       }
