@@ -167,6 +167,8 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
 
   log_i("Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)", message->info.dst_endpoint, message->info.cluster,
         message->attribute.id, message->attribute.data.size);
+
+  // Handle Light Change
   if (message->info.dst_endpoint == HA_ESP_LIGHT_ENDPOINT)
   {
     if (message->info.cluster == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF)
@@ -187,6 +189,21 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
       }
     }
   }
+
+  // Handle Switch Change
+  if (message->info.dst_endpoint == HA_ESP_SWITCH_ENDPOINT)
+  {
+    if (message->info.cluster == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF)
+    {
+      if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL)
+      {
+        bool switch_state = message->attribute.data.value ? *(bool *)message->attribute.data.value : switch_state;
+        log_i("Switch sets to %s", switch_state ? "On" : "Off");
+        // Handle the switch state here
+      }
+    }
+  }
+
   return ret;
 }
 
